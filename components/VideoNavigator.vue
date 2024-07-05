@@ -27,6 +27,11 @@ onMounted(async () => {
 	}
 });
 
+function ParametricBlend(t: number): number {
+	const sqr = t * t;
+	return sqr / (2.0 * (sqr - t) + 1.0);
+}
+
 async function easeTo(to: number) {
 	const video = videoRef.value;
 	if (!video) return;
@@ -44,13 +49,11 @@ async function easeTo(to: number) {
 		const progress = (t - start) / duration;
 
 		video.currentTime = from + (to - from) * Math.min(progress, 1);
-		console.log(video.currentTime);
-		console.time("play");
+
+		const blend = ParametricBlend(progress);
+		video.currentTime = from + (to - from) * Math.min(blend, 1);
 		await video.play();
-		console.timeEnd("play");
-		console.time("pause");
 		video.pause();
-		console.timeEnd("pause");
 
 		if (progress < 1 && latest === lastEaseStart) {
 			requestAnimationFrame(ease);
@@ -59,33 +62,33 @@ async function easeTo(to: number) {
 
 	requestAnimationFrame(ease);
 }
-
-function randomiseEase() {
-	const video = videoRef.value;
-	if (!video) return;
-
-	const to = Math.random() * video.duration;
-	console.log("Randomising to", to);
-	easeTo(to);
-}
 </script>
 
 <template>
-	<div class="w-full h-full grid grid-cols-1">
-		<video
-			controls
-			muted
-			ref="videoRef"
-			playsinline
-			webkit-playsinline
-			class="w-full h-screen object-cover"
-		/>
-		{{ videoDuration }}
-		<button @click="easeTo(0)">0/4</button>
-		<button @click="easeTo(videoDuration * 0.25)">1/4</button>
-		<button @click="easeTo(videoDuration * 0.5)">2/4</button>
-		<button @click="easeTo(videoDuration * 0.75)">3/4</button>
-		<button @click="easeTo(videoDuration * 1)">4/4</button>
-		<button class="my-12" @click="randomiseEase()">Randomise with ease</button>
+	<div>
+		<div class="w-full h-screen grid grid-cols-1">
+			<video
+				muted
+				ref="videoRef"
+				playsinline
+				webkit-playsinline
+				class="object-cover relative h-full -z-1"
+			/>
+		</div>
+		<div
+			class="flex justify-between absolute bottom-12 left-1/2 -translate-x-1/2 bg-white px-12 rounded-full"
+		>
+			<button @click="easeTo(0)">0/4</button>
+			<button @click="easeTo(videoDuration * 0.25)">1/4</button>
+			<button @click="easeTo(videoDuration * 0.5)">2/4</button>
+			<button @click="easeTo(videoDuration * 0.75)">3/4</button>
+			<button @click="easeTo(videoDuration * 1)">4/4</button>
+		</div>
 	</div>
 </template>
+
+<style scoped>
+button {
+	@apply px-2 py-3;
+}
+</style>
