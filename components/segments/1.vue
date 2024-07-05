@@ -15,6 +15,6 @@ import Image from "./Image.vue";
 				</p>
 			</div>
 		</div>
-		<Image src="/plaatje-1.png" />
+		<Image src="/plaatje-1.webp" />
 	</div>
 </template>

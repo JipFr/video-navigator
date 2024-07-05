@@ -4,6 +4,6 @@ import Image from "./Image.vue";
 
 <template>
 	<div class="absolute top-0 left-0 w-full h-full">
-		<Image src="/plaatje-2.png" />
+		<Image src="/plaatje-2.webp" />
 	</div>
 </template>
