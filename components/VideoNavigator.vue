@@ -78,11 +78,11 @@ async function easeTo(to: number) {
 		<div
 			class="flex justify-between absolute bottom-12 left-1/2 -translate-x-1/2 bg-white px-12 rounded-full"
 		>
-			<button @click="easeTo(0)">0/4</button>
-			<button @click="easeTo(videoDuration * 0.25)">1/4</button>
+			<button @click="easeTo(videoDuration * 1)">0/4</button>
+			<button @click="easeTo(videoDuration * 0.75)">1/4</button>
 			<button @click="easeTo(videoDuration * 0.5)">2/4</button>
-			<button @click="easeTo(videoDuration * 0.75)">3/4</button>
-			<button @click="easeTo(videoDuration * 1)">4/4</button>
+			<button @click="easeTo(videoDuration * 0.25)">3/4</button>
+			<button @click="easeTo(videoDuration * 0)">4/4</button>
 		</div>
 	</div>
 </template>
