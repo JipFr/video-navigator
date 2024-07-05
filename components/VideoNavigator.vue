@@ -48,6 +48,9 @@ async function easeTo(to: number) {
 		console.time("play");
 		await video.play();
 		console.timeEnd("play");
+		console.time("pause");
+		video.pause();
+		console.timeEnd("pause");
 
 		if (progress < 1 && latest === lastEaseStart) {
 			requestAnimationFrame(ease);
