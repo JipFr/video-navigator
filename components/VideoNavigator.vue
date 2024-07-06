@@ -99,7 +99,7 @@ async function easeTo(to: number) {
 	let latest = lastEaseStart.value;
 
 	const start = Date.now();
-	// let averages = [];
+	let averages = [];
 
 	const ease = async () => {
 		const t = Date.now();
@@ -109,9 +109,9 @@ async function easeTo(to: number) {
 		video.currentTime = from + (to - from) * Math.min(blend, 1);
 		const key = `Frame ${video.currentTime}`;
 		console.time(key);
-		// const n = Date.now();
+		const n = Date.now();
 		await video.play();
-		// averages.push(Date.now() - n);
+		averages.push(Date.now() - n);
 		console.timeEnd(key);
 		video.pause();
 
@@ -120,12 +120,12 @@ async function easeTo(to: number) {
 		} else if (progress >= 1) {
 			lastEaseStart.value = null;
 			setComponentVisibility();
-			// console.log(
-			// 	"Average:",
-			// 	averages.reduce((a, b) => a + b, 0) / averages.length
-			// );
-			// console.log("Highest:", Math.max(...averages));
-			// console.log("Lowest:", Math.min(...averages));
+			console.log(
+				"Average:",
+				averages.reduce((a, b) => a + b, 0) / averages.length
+			);
+			console.log("Highest:", Math.max(...averages));
+			console.log("Lowest:", Math.min(...averages));
 		}
 	};
 
@@ -139,12 +139,12 @@ function setComponentVisibility() {
 	if (!video) return;
 
 	const currentTime = video.currentTime;
-	const closestStops = stops.sort((a, b) => {
+	const closestStops = [...stops].sort((a, b) => {
 		return Math.abs(a.time - currentTime) - Math.abs(b.time - currentTime);
 	});
 
 	const distance = Math.abs(closestStops[0].time - currentTime);
-	if (distance < 0.1) closestStops[0].visible = true;
+	if (distance <= 0.1) closestStops[0].visible = true;
 }
 </script>
 
