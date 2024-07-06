@@ -25,14 +25,12 @@ useHead({
 	],
 });
 
-const stops = ref<
-	{
-		time: number;
-		component: typeof Seg1;
-		label: string;
-		visible?: boolean;
-	}[]
->([
+const stops: {
+	time: number;
+	component: typeof Seg1;
+	label: string;
+	visible?: boolean;
+}[] = [
 	{
 		time: videoDuration.value,
 		component: Seg2,
@@ -58,7 +56,7 @@ const stops = ref<
 		component: Seg1,
 		label: "4/4",
 	},
-]);
+];
 
 onMounted(async () => {
 	const video = videoRef.value;
@@ -70,7 +68,7 @@ onMounted(async () => {
 		videoDuration.value = video.duration;
 	});
 
-	const url = "/drone-short.mp4?t=" + Date.now();
+	const url = "/drone-short-265.mp4";
 
 	try {
 		const response = await fetch(url);
@@ -101,23 +99,33 @@ async function easeTo(to: number) {
 	let latest = lastEaseStart.value;
 
 	const start = Date.now();
+	// let averages = [];
 
 	const ease = async () => {
 		const t = Date.now();
 		const progress = (t - start) / duration;
 
-		video.currentTime = from + (to - from) * Math.min(progress, 1);
-
 		const blend = ParametricBlend(progress);
 		video.currentTime = from + (to - from) * Math.min(blend, 1);
+		const key = `Frame ${video.currentTime}`;
+		console.time(key);
+		// const n = Date.now();
 		await video.play();
+		// averages.push(Date.now() - n);
+		console.timeEnd(key);
 		video.pause();
 
 		if (progress < 1 && latest === lastEaseStart.value) {
-			requestAnimationFrame(ease);
+			ease();
 		} else if (progress >= 1) {
 			lastEaseStart.value = null;
 			setComponentVisibility();
+			// console.log(
+			// 	"Average:",
+			// 	averages.reduce((a, b) => a + b, 0) / averages.length
+			// );
+			// console.log("Highest:", Math.max(...averages));
+			// console.log("Lowest:", Math.min(...averages));
 		}
 	};
 
@@ -125,13 +133,13 @@ async function easeTo(to: number) {
 }
 
 function setComponentVisibility() {
-	for (const stop of stops.value) stop.visible = false;
+	for (const stop of stops) stop.visible = false;
 
 	const video = videoRef.value;
 	if (!video) return;
 
 	const currentTime = video.currentTime;
-	const closestStops = [...stops.value].sort((a, b) => {
+	const closestStops = stops.sort((a, b) => {
 		return Math.abs(a.time - currentTime) - Math.abs(b.time - currentTime);
 	});
 
