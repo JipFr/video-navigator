@@ -25,12 +25,14 @@ useHead({
 	],
 });
 
-const stops: {
-	time: number;
-	component: typeof Seg1;
-	label: string;
-	visible?: boolean;
-}[] = [
+const stops = ref<
+	{
+		time: number;
+		component: typeof Seg1;
+		label: string;
+		visible?: boolean;
+	}[]
+>([
 	{
 		time: videoDuration.value,
 		component: Seg2,
@@ -56,7 +58,7 @@ const stops: {
 		component: Seg1,
 		label: "4/4",
 	},
-];
+]);
 
 onMounted(async () => {
 	const video = videoRef.value;
@@ -133,13 +135,13 @@ async function easeTo(to: number) {
 }
 
 function setComponentVisibility() {
-	for (const stop of stops) stop.visible = false;
+	for (const stop of stops.value) stop.visible = false;
 
 	const video = videoRef.value;
 	if (!video) return;
 
 	const currentTime = video.currentTime;
-	const closestStops = [...stops].sort((a, b) => {
+	const closestStops = [...stops.value].sort((a, b) => {
 		return Math.abs(a.time - currentTime) - Math.abs(b.time - currentTime);
 	});
 
